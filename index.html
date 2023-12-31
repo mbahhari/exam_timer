@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Countdown Timer</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+
+      h2 {
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      #timer {
+        font-size: 24px;
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      .select-time {
+        text-align: center;
+        margin: 20px;
+      }
+    </style>
+</head>
+<body>
+    <h2>Exam Time</h2>
+    <div class="select-time">
+        <label for="hour-select">End Hour:</label>
+        <select id="hour-select">
+            <!-- Options for hours will be added here -->
+        </select>
+
+        <label for="minute-select">End Minutes:</label>
+        <select id="minute-select">
+            <!-- Options for minutes will be added here -->
+        </select>
+
+        <button id="start-timer-btn">Start Timer</button>
+    </div>
+    <div id="timer"></div>
+
+    <script>
+document.addEventListener("DOMContentLoaded", function () {
+    // Populate hour and minute dropdowns
+    for (var i = 0; i < 24; i++) {
+        var hourOption = document.createElement("option");
+        hourOption.value = i;
+        hourOption.text = i < 10 ? '0' + i : i;
+        document.getElementById("hour-select").appendChild(hourOption);
+    }
+
+    for (var i = 0; i < 60; i++) {
+        var minuteOption = document.createElement("option");
+        minuteOption.value = i;
+        minuteOption.text = i < 10 ? '0' + i : i;
+        document.getElementById("minute-select").appendChild(minuteOption);
+    }
+
+    var timerElement = document.getElementById("timer");
+    var startTimerButton = document.getElementById("start-timer-btn");
+    var interval; // Declare the interval outside so it can be cleared
+
+    startTimerButton.addEventListener("click", function() {
+        clearInterval(interval); // Clear the existing interval
+
+        var selectedHour = document.getElementById("hour-select").value;
+        var selectedMinute = document.getElementById("minute-select").value;
+
+        var endTime = new Date();
+        endTime.setHours(selectedHour, selectedMinute, 0, 0);
+
+        interval = setInterval(function () {
+            var now = new Date();
+            var distance = endTime - now;
+
+            if (distance < 0) {
+                clearInterval(interval);
+                timerElement.innerHTML = "Time's up!";
+                return;
+            }
+
+            var hours = Math.floor(distance / (1000 * 60 * 60));
+            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            timerElement.innerHTML = hours + "h " + minutes + "m " + seconds + "s ";
+        }, 1000);
+    });
+});
+    </script>
+</body>
+</html>
