@@ -40,6 +40,7 @@
             justify-content: center;
             padding: 20px;
             direction: rtl;
+            position: relative;
         }
 
         .container {
@@ -85,8 +86,55 @@
             font-size: 1rem;
         }
 
+        .theme-selector {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 12px 18px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+            backdrop-filter: blur(10px);
+        }
+
+        .theme-selector label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .theme-select {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Cairo', sans-serif;
+            min-width: 140px;
+        }
+
+        .theme-select:hover {
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .theme-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
         .timer-display {
-            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 50%, #0369a1 100%);
+            background: var(--bg-gradient);
             border-radius: 20px;
             padding: 40px;
             text-align: center;
@@ -101,8 +149,18 @@
         }
 
         .timer-display.warning {
-            background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
             animation: pulse 2s infinite;
+        }
+
+        .timer-display.warning.white-bg {
+            background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%);
+            color: #1f2937;
+        }
+
+        .timer-display.warning.white-bg .timer-text,
+        .timer-display.warning.white-bg .timer-value {
+            color: #1f2937;
         }
 
         .timer-display.expired {
@@ -168,7 +226,8 @@
             font-weight: 500;
         }
 
-        .time-select {
+        .time-select,
+        .time-input {
             background: white;
             border: 2px solid #e2e8f0;
             border-radius: 12px;
@@ -180,6 +239,10 @@
             transition: all 0.3s ease;
             min-width: 100px;
             text-align: center;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .time-select {
             appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%232563eb' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
@@ -187,15 +250,33 @@
             padding-left: 40px;
         }
 
-        .time-select:hover {
+        .time-input {
+            cursor: text;
+            appearance: textfield;
+            -moz-appearance: textfield;
+        }
+
+        .time-input::-webkit-outer-spin-button,
+        .time-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .time-select:hover,
+        .time-input:hover {
             border-color: var(--primary-color);
             box-shadow: var(--shadow-sm);
         }
 
-        .time-select:focus {
+        .time-select:focus,
+        .time-input:focus {
             outline: none;
             border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .time-input:invalid {
+            border-color: #ef4444;
         }
 
         .button-group {
@@ -298,6 +379,24 @@
         }
 
         @media (max-width: 640px) {
+            .theme-selector {
+                top: 10px;
+                left: 10px;
+                padding: 10px 14px;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .theme-selector label {
+                font-size: 0.85rem;
+            }
+
+            .theme-select {
+                min-width: 120px;
+                font-size: 0.85rem;
+                padding: 6px 12px;
+            }
+
             .container {
                 padding: 25px;
             }
@@ -349,10 +448,25 @@
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>⏱️ مؤقت الامتحان</h1>
-            <p>اختر وقت انتهاء الامتحان وابدأ العد التنازلي</p>
+        <div class="theme-selector">
+            <label for="theme-select">🎨 اختر التصميم:</label>
+            <select id="theme-select" class="theme-select">
+                <option value="blue">أزرق سماوي</option>
+                <option value="green">أخضر</option>
+                <option value="purple">بنفسجي</option>
+                <option value="orange">برتقالي</option>
+                <option value="red">أحمر</option>
+                <option value="teal">تركوازي</option>
+                <option value="pink">وردي</option>
+                <option value="indigo">نيلي</option>
+            </select>
         </div>
+
+        <div class="container">
+            <div class="header">
+                <h1>⏱️ مؤقت الامتحان</h1>
+                <p>اختر وقت انتهاء الامتحان وابدأ العد التنازلي</p>
+            </div>
 
         <div class="timer-display" id="timer-display">
             <div class="timer-text" id="timer-text">اختر الوقت وابدأ المؤقت</div>
@@ -365,16 +479,32 @@
         <div class="time-selector">
             <div class="time-selector-group">
                 <div class="time-input-wrapper">
-                    <label for="hour-select">الساعة</label>
-                    <select id="hour-select" class="time-select">
+                    <label for="hour-input">الساعة</label>
+                    <input type="number" 
+                           id="hour-input" 
+                           class="time-input" 
+                           min="0" 
+                           max="23" 
+                           step="1"
+                           list="hour-list"
+                           placeholder="00">
+                    <datalist id="hour-list">
                         <!-- Options will be added by JavaScript -->
-                    </select>
+                    </datalist>
                 </div>
                 <div class="time-input-wrapper">
-                    <label for="minute-select">الدقائق</label>
-                    <select id="minute-select" class="time-select">
+                    <label for="minute-input">الدقائق</label>
+                    <input type="number" 
+                           id="minute-input" 
+                           class="time-input" 
+                           min="0" 
+                           max="59" 
+                           step="1"
+                           list="minute-list"
+                           placeholder="00">
+                    <datalist id="minute-list">
                         <!-- Options will be added by JavaScript -->
-                    </select>
+                    </datalist>
                 </div>
             </div>
         </div>
@@ -390,34 +520,185 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
+            // Theme definitions
+            const themes = {
+                blue: {
+                    primary: '#2563eb',
+                    primaryDark: '#1d4ed8',
+                    secondary: '#3b82f6',
+                    bgGradient: 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 50%, #0369a1 100%)',
+                    shadow: 'rgba(14, 165, 233, 0.15)',
+                    shadowXl: 'rgba(14, 165, 233, 0.2)'
+                },
+                green: {
+                    primary: '#10b981',
+                    primaryDark: '#059669',
+                    secondary: '#34d399',
+                    bgGradient: 'linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%)',
+                    shadow: 'rgba(16, 185, 129, 0.15)',
+                    shadowXl: 'rgba(16, 185, 129, 0.2)'
+                },
+                purple: {
+                    primary: '#8b5cf6',
+                    primaryDark: '#7c3aed',
+                    secondary: '#a78bfa',
+                    bgGradient: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 50%, #6d28d9 100%)',
+                    shadow: 'rgba(139, 92, 246, 0.15)',
+                    shadowXl: 'rgba(139, 92, 246, 0.2)'
+                },
+                orange: {
+                    primary: '#f59e0b',
+                    primaryDark: '#d97706',
+                    secondary: '#fbbf24',
+                    bgGradient: 'linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%)',
+                    shadow: 'rgba(245, 158, 11, 0.15)',
+                    shadowXl: 'rgba(245, 158, 11, 0.2)'
+                },
+                red: {
+                    primary: '#ef4444',
+                    primaryDark: '#dc2626',
+                    secondary: '#f87171',
+                    bgGradient: 'linear-gradient(135deg, #ef4444 0%, #dc2626 50%, #b91c1c 100%)',
+                    shadow: 'rgba(239, 68, 68, 0.15)',
+                    shadowXl: 'rgba(239, 68, 68, 0.2)'
+                },
+                teal: {
+                    primary: '#14b8a6',
+                    primaryDark: '#0d9488',
+                    secondary: '#5eead4',
+                    bgGradient: 'linear-gradient(135deg, #14b8a6 0%, #0d9488 50%, #0f766e 100%)',
+                    shadow: 'rgba(20, 184, 166, 0.15)',
+                    shadowXl: 'rgba(20, 184, 166, 0.2)'
+                },
+                pink: {
+                    primary: '#ec4899',
+                    primaryDark: '#db2777',
+                    secondary: '#f472b6',
+                    bgGradient: 'linear-gradient(135deg, #ec4899 0%, #db2777 50%, #be185d 100%)',
+                    shadow: 'rgba(236, 72, 153, 0.15)',
+                    shadowXl: 'rgba(236, 72, 153, 0.2)'
+                },
+                indigo: {
+                    primary: '#6366f1',
+                    primaryDark: '#4f46e5',
+                    secondary: '#818cf8',
+                    bgGradient: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 50%, #4338ca 100%)',
+                    shadow: 'rgba(99, 102, 241, 0.15)',
+                    shadowXl: 'rgba(99, 102, 241, 0.2)'
+                }
+            };
+
+            // Apply theme function
+            function applyTheme(themeName) {
+                const theme = themes[themeName];
+                if (!theme) return;
+
+                const root = document.documentElement;
+                root.style.setProperty('--primary-color', theme.primary);
+                root.style.setProperty('--primary-dark', theme.primaryDark);
+                root.style.setProperty('--secondary-color', theme.secondary);
+                root.style.setProperty('--bg-gradient', theme.bgGradient);
+                root.style.setProperty('--shadow-lg', `0 10px 25px ${theme.shadow}`);
+                root.style.setProperty('--shadow-xl', `0 20px 40px ${theme.shadowXl}`);
+
+                // Update timer display background
+                const timerDisplay = document.getElementById("timer-display");
+                if (!timerDisplay.classList.contains("warning") && !timerDisplay.classList.contains("expired")) {
+                    timerDisplay.style.background = theme.bgGradient;
+                }
+
+                // Update select dropdown arrow color
+                const style = document.createElement('style');
+                style.textContent = `
+                    .time-select {
+                        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='${encodeURIComponent(theme.primary)}' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+                    }
+                    .time-select:focus {
+                        box-shadow: 0 0 0 3px ${theme.primary}1A;
+                    }
+                `;
+                const existingStyle = document.getElementById('theme-dynamic-style');
+                if (existingStyle) {
+                    existingStyle.remove();
+                }
+                style.id = 'theme-dynamic-style';
+                document.head.appendChild(style);
+
+                // Save to localStorage
+                localStorage.setItem('selectedTheme', themeName);
+            }
+
+            // Theme selector
+            const themeSelect = document.getElementById("theme-select");
+            
+            // Load saved theme or default to blue
+            const savedTheme = localStorage.getItem('selectedTheme') || 'blue';
+            themeSelect.value = savedTheme;
+            applyTheme(savedTheme);
+
+            // Listen for theme changes
+            themeSelect.addEventListener("change", function() {
+                applyTheme(this.value);
+            });
+
             // Get current time and set as default
             const now = new Date();
             const currentHour = now.getHours();
             const currentMinute = now.getMinutes();
 
-            // Populate hour dropdown
-            const hourSelect = document.getElementById("hour-select");
+            // Populate hour datalist
+            const hourList = document.getElementById("hour-list");
             for (let i = 0; i < 24; i++) {
                 const option = document.createElement("option");
-                option.value = i;
-                option.textContent = String(i).padStart(2, '0');
-                if (i === currentHour) {
-                    option.selected = true;
-                }
-                hourSelect.appendChild(option);
+                option.value = String(i).padStart(2, '0');
+                hourList.appendChild(option);
             }
 
-            // Populate minute dropdown
-            const minuteSelect = document.getElementById("minute-select");
-            for (let i = 0; i < 60; i += 5) {
+            // Populate minute datalist
+            const minuteList = document.getElementById("minute-list");
+            for (let i = 0; i < 60; i++) {
                 const option = document.createElement("option");
-                option.value = i;
-                option.textContent = String(i).padStart(2, '0');
-                if (i === currentMinute || (i > currentMinute && i < currentMinute + 5)) {
-                    option.selected = true;
-                }
-                minuteSelect.appendChild(option);
+                option.value = String(i).padStart(2, '0');
+                minuteList.appendChild(option);
             }
+
+            // Get input elements and set default values
+            const hourInput = document.getElementById("hour-input");
+            const minuteInput = document.getElementById("minute-input");
+            hourInput.value = String(currentHour).padStart(2, '0');
+            minuteInput.value = String(currentMinute).padStart(2, '0');
+
+            // Add input validation and formatting
+            hourInput.addEventListener("blur", function() {
+                let value = parseInt(this.value);
+                if (!isNaN(value)) {
+                    if (value < 0) value = 0;
+                    if (value > 23) value = 23;
+                    this.value = String(value).padStart(2, '0');
+                }
+            });
+
+            minuteInput.addEventListener("blur", function() {
+                let value = parseInt(this.value);
+                if (!isNaN(value)) {
+                    if (value < 0) value = 0;
+                    if (value > 59) value = 59;
+                    this.value = String(value).padStart(2, '0');
+                }
+            });
+
+            // Allow Enter key to start timer
+            hourInput.addEventListener("keypress", function(e) {
+                if (e.key === "Enter") {
+                    minuteInput.focus();
+                }
+            });
+
+            minuteInput.addEventListener("keypress", function(e) {
+                if (e.key === "Enter") {
+                    startBtn.click();
+                }
+            });
 
             // Elements
             const timerDisplay = document.getElementById("timer-display");
@@ -449,7 +730,9 @@
                     timerValue.textContent = "00:00:00";
                     timerText.textContent = "⏰ انتهى الوقت!";
                     timerDisplay.classList.add("expired");
-                    timerDisplay.classList.remove("warning");
+                    timerDisplay.classList.remove("warning", "white-bg");
+                    timerText.style.color = "";
+                    timerValue.style.color = "";
                     statusIndicator.textContent = "⚠️ انتهى وقت الامتحان";
                     statusIndicator.className = "status-indicator expired";
                     progressFill.style.width = "0%";
@@ -471,25 +754,77 @@
                     progressFill.style.width = (remaining * 100) + "%";
                 }
 
-                // Warning state (less than 10 minutes)
-                if (distance < 10 * 60 * 1000 && !timerDisplay.classList.contains("warning")) {
+                // Warning state (less than 5 minutes)
+                if (distance < 5 * 60 * 1000 && !timerDisplay.classList.contains("warning")) {
                     timerDisplay.classList.add("warning");
+                    const currentThemeName = themeSelect.value;
+                    
+                    // If theme is red, use white background instead
+                    if (currentThemeName === 'red') {
+                        timerDisplay.classList.add("white-bg");
+                        timerText.style.color = "#1f2937";
+                        timerValue.style.color = "#1f2937";
+                    } else {
+                        timerDisplay.classList.remove("white-bg");
+                        timerText.style.color = "";
+                        timerValue.style.color = "";
+                    }
+                    
                     timerText.textContent = "⚠️ الوقت المتبقي قليل!";
-                    statusIndicator.textContent = "⚠️ تحذير: أقل من 10 دقائق متبقية";
+                    statusIndicator.textContent = "⚠️ تحذير: أقل من 5 دقائق متبقية";
                     statusIndicator.className = "status-indicator warning";
-                } else if (distance >= 10 * 60 * 1000) {
-                    timerDisplay.classList.remove("warning");
+                } else if (distance >= 5 * 60 * 1000) {
+                    timerDisplay.classList.remove("warning", "white-bg");
+                    timerText.style.color = "";
+                    timerValue.style.color = "";
+                    const currentTheme = themes[themeSelect.value];
+                    if (currentTheme && !timerDisplay.classList.contains("expired")) {
+                        timerDisplay.style.background = currentTheme.bgGradient;
+                    }
                     timerText.textContent = "⏳ الوقت المتبقي";
                     statusIndicator.textContent = "✓ المؤقت يعمل";
                     statusIndicator.className = "status-indicator active";
+                } else if (distance < 5 * 60 * 1000) {
+                    // Update warning state if already in warning mode
+                    const currentThemeName = themeSelect.value;
+                    if (currentThemeName === 'red' && !timerDisplay.classList.contains("white-bg")) {
+                        timerDisplay.classList.add("white-bg");
+                        timerText.style.color = "#1f2937";
+                        timerValue.style.color = "#1f2937";
+                    } else if (currentThemeName !== 'red' && timerDisplay.classList.contains("white-bg")) {
+                        timerDisplay.classList.remove("white-bg");
+                        timerText.style.color = "";
+                        timerValue.style.color = "";
+                    }
                 }
             }
 
             startBtn.addEventListener("click", function() {
                 clearInterval(interval);
 
-                const selectedHour = parseInt(hourSelect.value);
-                const selectedMinute = parseInt(minuteSelect.value);
+                // Get and validate input values
+                let selectedHour = parseInt(hourInput.value);
+                let selectedMinute = parseInt(minuteInput.value);
+
+                // Validate hour (0-23)
+                if (isNaN(selectedHour) || selectedHour < 0 || selectedHour > 23) {
+                    statusIndicator.textContent = "⚠️ يرجى إدخال ساعة صحيحة (0-23)";
+                    statusIndicator.className = "status-indicator warning";
+                    hourInput.focus();
+                    return;
+                }
+
+                // Validate minute (0-59)
+                if (isNaN(selectedMinute) || selectedMinute < 0 || selectedMinute > 59) {
+                    statusIndicator.textContent = "⚠️ يرجى إدخال دقائق صحيحة (0-59)";
+                    statusIndicator.className = "status-indicator warning";
+                    minuteInput.focus();
+                    return;
+                }
+
+                // Format values
+                hourInput.value = String(selectedHour).padStart(2, '0');
+                minuteInput.value = String(selectedMinute).padStart(2, '0');
 
                 endTime = new Date();
                 endTime.setHours(selectedHour, selectedMinute, 0, 0);
@@ -502,7 +837,13 @@
                 totalDuration = endTime - new Date();
 
                 // Reset display
-                timerDisplay.classList.remove("expired", "warning");
+                timerDisplay.classList.remove("expired", "warning", "white-bg");
+                timerText.style.color = "";
+                timerValue.style.color = "";
+                const currentTheme = themes[themeSelect.value];
+                if (currentTheme) {
+                    timerDisplay.style.background = currentTheme.bgGradient;
+                }
                 progressBar.style.display = "block";
                 progressFill.style.width = "100%";
 
@@ -510,8 +851,8 @@
                 startBtn.style.display = "none";
                 stopBtn.style.display = "inline-block";
                 resetBtn.style.display = "inline-block";
-                hourSelect.disabled = true;
-                minuteSelect.disabled = true;
+                hourInput.disabled = true;
+                minuteInput.disabled = true;
 
                 // Start interval
                 updateTimer();
@@ -522,6 +863,8 @@
                 clearInterval(interval);
                 startBtn.style.display = "inline-block";
                 stopBtn.style.display = "none";
+                hourInput.disabled = false;
+                minuteInput.disabled = false;
                 statusIndicator.textContent = "⏸ المؤقت متوقف";
                 statusIndicator.className = "status-indicator";
             });
@@ -533,15 +876,21 @@
                 
                 timerValue.textContent = "--:--:--";
                 timerText.textContent = "اختر الوقت وابدأ المؤقت";
-                timerDisplay.classList.remove("expired", "warning");
+                timerDisplay.classList.remove("expired", "warning", "white-bg");
+                timerText.style.color = "";
+                timerValue.style.color = "";
+                const currentTheme = themes[themeSelect.value];
+                if (currentTheme) {
+                    timerDisplay.style.background = currentTheme.bgGradient;
+                }
                 progressBar.style.display = "none";
                 progressFill.style.width = "0%";
                 
                 startBtn.style.display = "inline-block";
                 stopBtn.style.display = "none";
                 resetBtn.style.display = "none";
-                hourSelect.disabled = false;
-                minuteSelect.disabled = false;
+                hourInput.disabled = false;
+                minuteInput.disabled = false;
                 statusIndicator.textContent = "";
                 statusIndicator.className = "status-indicator";
             });
