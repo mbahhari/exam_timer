@@ -1,96 +1,548 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar" dir="rtl">
 <head>
-    <title>Countdown Timer</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مؤقت الامتحان - Exam Timer</title>
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-      }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-      h2 {
-        text-align: center;
-        margin-top: 20px;
-      }
+        :root {
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary-color: #8b5cf6;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+            --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
 
-      #timer {
-        font-size: 24px;
-        text-align: center;
-        margin-top: 20px;
-      }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            direction: rtl;
+        }
 
-      .select-time {
-        text-align: center;
-        margin: 20px;
-      }
+        .container {
+            background: var(--card-bg);
+            border-radius: 24px;
+            box-shadow: var(--shadow-xl);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            animation: fadeInUp 0.6s ease-out;
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            font-weight: 700;
+            background: var(--bg-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .timer-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-lg);
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .timer-display.warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+            animation: pulse 2s infinite;
+        }
+
+        .timer-display.expired {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.02);
+            }
+        }
+
+        .timer-text {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .timer-value {
+            font-size: 4rem;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 4px;
+        }
+
+        .timer-unit {
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin: 0 8px;
+        }
+
+        .time-selector {
+            background: #f9fafb;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 25px;
+        }
+
+        .time-selector-group {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .time-input-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .time-input-wrapper label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .time-select {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 12px 20px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 100px;
+            text-align: center;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236366f1' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: left 15px center;
+            padding-left: 40px;
+        }
+
+        .time-select:hover {
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .time-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-md);
+            min-width: 140px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary {
+            background: var(--bg-gradient);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .status-indicator {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            min-height: 24px;
+        }
+
+        .status-indicator.active {
+            color: var(--success-color);
+            font-weight: 600;
+        }
+
+        .status-indicator.warning {
+            color: var(--warning-color);
+            font-weight: 600;
+        }
+
+        .status-indicator.expired {
+            color: var(--danger-color);
+            font-weight: 600;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 25px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .timer-value {
+                font-size: 2.5rem;
+                letter-spacing: 2px;
+            }
+
+            .timer-unit {
+                font-size: 1.2rem;
+            }
+
+            .time-selector {
+                padding: 20px;
+            }
+
+            .time-selector-group {
+                gap: 15px;
+            }
+
+            .btn {
+                width: 100%;
+                min-width: auto;
+            }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: white;
+            border-radius: 3px;
+            transition: width 1s linear;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
     </style>
 </head>
 <body>
-    <h2>Exam Time</h2>
-    <div class="select-time">
-        <label for="hour-select">End Hour:</label>
-        <select id="hour-select">
-            <!-- Options for hours will be added here -->
-        </select>
+    <div class="container">
+        <div class="header">
+            <h1>⏱️ مؤقت الامتحان</h1>
+            <p>اختر وقت انتهاء الامتحان وابدأ العد التنازلي</p>
+        </div>
 
-        <label for="minute-select">End Minutes:</label>
-        <select id="minute-select">
-            <!-- Options for minutes will be added here -->
-        </select>
+        <div class="timer-display" id="timer-display">
+            <div class="timer-text" id="timer-text">اختر الوقت وابدأ المؤقت</div>
+            <div class="timer-value" id="timer-value">--:--:--</div>
+            <div class="progress-bar" id="progress-bar" style="display: none;">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
 
-        <button id="start-timer-btn">Start Timer</button>
+        <div class="time-selector">
+            <div class="time-selector-group">
+                <div class="time-input-wrapper">
+                    <label for="hour-select">الساعة</label>
+                    <select id="hour-select" class="time-select">
+                        <!-- Options will be added by JavaScript -->
+                    </select>
+                </div>
+                <div class="time-input-wrapper">
+                    <label for="minute-select">الدقائق</label>
+                    <select id="minute-select" class="time-select">
+                        <!-- Options will be added by JavaScript -->
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button id="start-timer-btn" class="btn btn-primary">▶ بدء المؤقت</button>
+            <button id="stop-timer-btn" class="btn btn-secondary" style="display: none;">⏸ إيقاف</button>
+            <button id="reset-timer-btn" class="btn btn-secondary" style="display: none;">↻ إعادة تعيين</button>
+        </div>
+
+        <div class="status-indicator" id="status-indicator"></div>
     </div>
-    <div id="timer"></div>
 
     <script>
-document.addEventListener("DOMContentLoaded", function () {
-    // Populate hour and minute dropdowns
-    for (var i = 0; i < 24; i++) {
-        var hourOption = document.createElement("option");
-        hourOption.value = i;
-        hourOption.text = i < 10 ? '0' + i : i;
-        document.getElementById("hour-select").appendChild(hourOption);
-    }
+        document.addEventListener("DOMContentLoaded", function () {
+            // Get current time and set as default
+            const now = new Date();
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
 
-    for (var i = 0; i < 60; i++) {
-        var minuteOption = document.createElement("option");
-        minuteOption.value = i;
-        minuteOption.text = i < 10 ? '0' + i : i;
-        document.getElementById("minute-select").appendChild(minuteOption);
-    }
-
-    var timerElement = document.getElementById("timer");
-    var startTimerButton = document.getElementById("start-timer-btn");
-    var interval; // Declare the interval outside so it can be cleared
-
-    startTimerButton.addEventListener("click", function() {
-        clearInterval(interval); // Clear the existing interval
-
-        var selectedHour = document.getElementById("hour-select").value;
-        var selectedMinute = document.getElementById("minute-select").value;
-
-        var endTime = new Date();
-        endTime.setHours(selectedHour, selectedMinute, 0, 0);
-
-        interval = setInterval(function () {
-            var now = new Date();
-            var distance = endTime - now;
-
-            if (distance < 0) {
-                clearInterval(interval);
-                timerElement.innerHTML = "Time's up!";
-                return;
+            // Populate hour dropdown
+            const hourSelect = document.getElementById("hour-select");
+            for (let i = 0; i < 24; i++) {
+                const option = document.createElement("option");
+                option.value = i;
+                option.textContent = String(i).padStart(2, '0');
+                if (i === currentHour) {
+                    option.selected = true;
+                }
+                hourSelect.appendChild(option);
             }
 
-            var hours = Math.floor(distance / (1000 * 60 * 60));
-            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            // Populate minute dropdown
+            const minuteSelect = document.getElementById("minute-select");
+            for (let i = 0; i < 60; i += 5) {
+                const option = document.createElement("option");
+                option.value = i;
+                option.textContent = String(i).padStart(2, '0');
+                if (i === currentMinute || (i > currentMinute && i < currentMinute + 5)) {
+                    option.selected = true;
+                }
+                minuteSelect.appendChild(option);
+            }
 
-            timerElement.innerHTML = hours + "h " + minutes + "m " + seconds + "s ";
-        }, 1000);
-    });
-});
+            // Elements
+            const timerDisplay = document.getElementById("timer-display");
+            const timerText = document.getElementById("timer-text");
+            const timerValue = document.getElementById("timer-value");
+            const progressBar = document.getElementById("progress-bar");
+            const progressFill = document.getElementById("progress-fill");
+            const statusIndicator = document.getElementById("status-indicator");
+            const startBtn = document.getElementById("start-timer-btn");
+            const stopBtn = document.getElementById("stop-timer-btn");
+            const resetBtn = document.getElementById("reset-timer-btn");
+
+            let interval = null;
+            let endTime = null;
+            let totalDuration = 0;
+
+            function formatTime(hours, minutes, seconds) {
+                return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }
+
+            function updateTimer() {
+                if (!endTime) return;
+
+                const now = new Date();
+                const distance = endTime - now;
+
+                if (distance < 0) {
+                    clearInterval(interval);
+                    timerValue.textContent = "00:00:00";
+                    timerText.textContent = "⏰ انتهى الوقت!";
+                    timerDisplay.classList.add("expired");
+                    timerDisplay.classList.remove("warning");
+                    statusIndicator.textContent = "⚠️ انتهى وقت الامتحان";
+                    statusIndicator.className = "status-indicator expired";
+                    progressFill.style.width = "0%";
+                    startBtn.style.display = "inline-block";
+                    stopBtn.style.display = "none";
+                    resetBtn.style.display = "inline-block";
+                    return;
+                }
+
+                const hours = Math.floor(distance / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                timerValue.textContent = formatTime(hours, minutes, seconds);
+
+                // Update progress bar
+                if (totalDuration > 0) {
+                    const remaining = distance / totalDuration;
+                    progressFill.style.width = (remaining * 100) + "%";
+                }
+
+                // Warning state (less than 10 minutes)
+                if (distance < 10 * 60 * 1000 && !timerDisplay.classList.contains("warning")) {
+                    timerDisplay.classList.add("warning");
+                    timerText.textContent = "⚠️ الوقت المتبقي قليل!";
+                    statusIndicator.textContent = "⚠️ تحذير: أقل من 10 دقائق متبقية";
+                    statusIndicator.className = "status-indicator warning";
+                } else if (distance >= 10 * 60 * 1000) {
+                    timerDisplay.classList.remove("warning");
+                    timerText.textContent = "⏳ الوقت المتبقي";
+                    statusIndicator.textContent = "✓ المؤقت يعمل";
+                    statusIndicator.className = "status-indicator active";
+                }
+            }
+
+            startBtn.addEventListener("click", function() {
+                clearInterval(interval);
+
+                const selectedHour = parseInt(hourSelect.value);
+                const selectedMinute = parseInt(minuteSelect.value);
+
+                endTime = new Date();
+                endTime.setHours(selectedHour, selectedMinute, 0, 0);
+
+                // If selected time is in the past, set it for tomorrow
+                if (endTime < new Date()) {
+                    endTime.setDate(endTime.getDate() + 1);
+                }
+
+                totalDuration = endTime - new Date();
+
+                // Reset display
+                timerDisplay.classList.remove("expired", "warning");
+                progressBar.style.display = "block";
+                progressFill.style.width = "100%";
+
+                // Update UI
+                startBtn.style.display = "none";
+                stopBtn.style.display = "inline-block";
+                resetBtn.style.display = "inline-block";
+                hourSelect.disabled = true;
+                minuteSelect.disabled = true;
+
+                // Start interval
+                updateTimer();
+                interval = setInterval(updateTimer, 1000);
+            });
+
+            stopBtn.addEventListener("click", function() {
+                clearInterval(interval);
+                startBtn.style.display = "inline-block";
+                stopBtn.style.display = "none";
+                statusIndicator.textContent = "⏸ المؤقت متوقف";
+                statusIndicator.className = "status-indicator";
+            });
+
+            resetBtn.addEventListener("click", function() {
+                clearInterval(interval);
+                endTime = null;
+                totalDuration = 0;
+                
+                timerValue.textContent = "--:--:--";
+                timerText.textContent = "اختر الوقت وابدأ المؤقت";
+                timerDisplay.classList.remove("expired", "warning");
+                progressBar.style.display = "none";
+                progressFill.style.width = "0%";
+                
+                startBtn.style.display = "inline-block";
+                stopBtn.style.display = "none";
+                resetBtn.style.display = "none";
+                hourSelect.disabled = false;
+                minuteSelect.disabled = false;
+                statusIndicator.textContent = "";
+                statusIndicator.className = "status-indicator";
+            });
+        });
     </script>
 </body>
 </html>
